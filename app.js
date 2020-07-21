@@ -77,7 +77,7 @@ speechToText
     speechModels = response.result.models.filter(model => model.rate > 8000); // TODO: Make it a .env setting
     // Make description be `[lang] description` so the sort-by-lang makes sense.
     speechModels = speechModels.map(m => ({ ...m, description: `[${m.language}]  ${m.description}` }));
-    speechModels.sort(function(a, b) {  // eslint-disable-line
+    speechModels.sort(function (a, b) {  // eslint-disable-line
       // Sort by 1 - language, 2 - description.
       return a.language.localeCompare(b.language) || a.description.localeCompare(b.description);
     });
@@ -174,6 +174,7 @@ app.get('/api/v1/credentials', async (req, res, next) => {
  */
 app.get('/api/v1/translate', async (req, res) => {
   const inputText = req.query.text;
+<<<<<<< Updated upstream
 
   const ltParams = {
     text: inputText,
@@ -196,6 +197,116 @@ app.get('/api/v1/translate', async (req, res) => {
     console.log('TRANSLATED:', inputText, ' --->', req.query.text);
     res.json({ translated: req.query.text });
   } catch (error) {
+=======
+  //console.log(inputText);
+
+  const analyzeParams =
+  {
+    'text': inputText,
+    'features':
+    {
+      'entities':
+      {
+        //'emotion': true,
+        'sentiment': true,
+        'limit': 2,
+      },
+      'keywords':
+      {
+        'emotion': true,
+        'sentiment': true,
+        'limit': 2,
+      },
+
+
+      'emotion':
+      {
+        'targets':
+          [
+            'fire',
+          ]
+      },
+
+      // 'sentiment': 
+      // {
+      //   'document': true
+      // },
+    },
+  };
+
+  try {
+    //const ltResult = await naturalLanguageUnderstanding.analyze(analyzeParams);
+
+
+    req.query.text = await naturalLanguageUnderstanding.analyze(analyzeParams);
+    let obj = JSON.stringify(req.query.text, null, 2);
+    let abc = JSON.parse(obj);
+    req.query.text = abc.result.emotion.targets[0].emotion.fear;
+
+    if (req.query.text > 0.02) {
+      req.query.text = 'FIRE';
+    }
+    else {
+      req.query.text = 'NO FIRE';
+    }
+
+    console.log(req.query.text);
+
+
+    // req.query.text = abc.result.sentiment.document.score;
+
+
+    naturalLanguageUnderstanding.analyze(analyzeParams)
+      .then(analysisResults => {
+        console.log(JSON.stringify(analysisResults, null, 2));
+      })
+
+    console.log(req.query.text);
+
+
+
+    //req.query.text = ltResult.result.translations[0].translation;
+
+    let outputDemo = '';
+
+    // naturalLanguageUnderstanding.analyze(analyzeParams)
+    // .then(analysisResults => {
+
+    //   let obj = JSON.stringify(analysisResults, null, 2);
+    //   //console.log(obj);
+    //   let abc = JSON.parse(obj);
+    //   //console.log(abc.result.sentiment.document.score);
+    //   outputDemo = abc.result.sentiment.document.score;
+
+    //   //const parseJ = JSON.parse(analysisResults);
+    //   // console.log(JSON.stringify(analysisResults, null, 2));
+    //   // console.log(JSON.stringify(JSON.parse(analysisResults).score, null, 2));
+    // })
+
+
+
+
+    // let textOut = naturalLanguageUnderstanding.analyze(analyzeParams)
+    // .then(analysisResults => {(JSON.stringify(analysisResults, null, 2));
+    // })
+
+    //console.log(textOut);
+    // naturalLanguageUnderstanding.analyze(analyzeParams)
+    // .then(analysisResults => {
+    //   console.log(JSON.stringify(analysisResults, null, 2));
+    //   req.query.text = JSON.stringify(analysisResults, null, 2);
+    // })
+
+    //req.query.text = textOut.stringify();
+
+    //console.log('TRANSLATED:', inputText, ' --->', req.query.text);
+
+    // req.query.text = outputDemo;
+    // console.log(outputDemo);
+    await res.json({ translated: 'Danger Response: ' + req.query.text });
+  }
+  catch (error) {
+>>>>>>> Stashed changes
     console.log(error);
     res.send(error);
   }
