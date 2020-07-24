@@ -16,6 +16,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { GoogleMap } from "react-google-maps";
 
 import { JsonInline } from './json-inline.jsx';
 
