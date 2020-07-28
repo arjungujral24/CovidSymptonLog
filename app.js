@@ -228,8 +228,9 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 app.get('/api/v1/translate', async (req, res) => {
 
   // const inputText = req.query.text;
-  const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
-  console.log(inputText);
+  // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
+  const inputText = 'My windshield was broken so i went to Lydias auto repair. They vaccumed the shatter glass.'
+  // console.log(inputText);
 
   const analyzeParams = 
   {
@@ -250,24 +251,42 @@ app.get('/api/v1/translate', async (req, res) => {
       // },
 
 
-      'emotion': 
-      {
-        'targets': 
-        [
-          'fire',
-        ]
-      },
+      // 'emotion': 
+      // {
+      //   'targets': 
+      //   [
+      //     'fire',
+      //   ]
+      // },
 
       // 'relations':
       // {
       //   'model': '4723ec5f-7e27-40d4-9abf-dfd9454eee21'
-      // }
+      // },
 
       // 'sentiment': 
       // {
       //   'document': true
       // },
-    },
+
+      'entities': {
+        'model': '4723ec5f-7e27-40d4-9abf-dfd9454eee21'
+      },
+      'keywords': {
+        'emotion': true,
+        "sentiment": true
+      },
+      "emotion": {
+          "sentiment": true
+      },
+      "categories": {
+        "sentiment": true
+      },
+      "relations": {
+        "model": '4723ec5f-7e27-40d4-9abf-dfd9454eee21'
+      },
+      "sentiment": {}
+    }
   };
 
   try 
@@ -275,6 +294,7 @@ app.get('/api/v1/translate', async (req, res) => {
     //const ltResult = await naturalLanguageUnderstanding.analyze(analyzeParams);
 
     const outputNLU = await naturalLanguageUnderstanding.analyze(analyzeParams);
+    console.log('OutputNLU: ' + outputNLU);
     let obj = await JSON.stringify(outputNLU, null, 2);
     // req.query.text = await naturalLanguageUnderstanding.analyze(analyzeParams);
     // let obj = await JSON.stringify(req.query.text, null, 2);
@@ -283,31 +303,27 @@ app.get('/api/v1/translate', async (req, res) => {
     console.log(abc);
     // req.query.text = abc.result.emotion.targets[0].emotion.fear;
 
-    let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
-    let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
-    let parseAnger = await abc.result.emotion.targets[0].emotion.anger;
-    console.log('ParseSad: ' + parseSad + ' ParseJoy ' + parseJoy + ' ParseAnger ' + parseAnger);
+    // let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
+    // let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
+    // let parseAnger = await abc.result.emotion.targets[0].emotion.anger;
+    // console.log('ParseSad: ' + parseSad + ' ParseJoy ' + parseJoy + ' ParseAnger ' + parseAnger);
 
-    // let parseRelation = await abc.result.relations.type;
+    let parseRelation = await abc.result.relations.type;
 
-    // if(req.query.text > 0.02)
-    // {
-    //   req.query.text = 'FIRE';
-    // }
 
     // req.query.text = abc.result.sentiment.document;
 
 
-    if(parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05)
-    {
-      req.query.text = 'FIRE';
-    }
-    else
-    {
-      req.query.text = 'NO FIRE';
-    }
+    // if(parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05)
+    // {
+    //   req.query.text = 'FIRE';
+    // }
+    // else
+    // {
+    //   req.query.text = 'NO FIRE';
+    // }
 
-    // req.query.text = parseRelation;
+    req.query.text = parseRelation;
 
     console.log(req.query.text);
 
@@ -376,7 +392,7 @@ app.get('/api/v1/translate', async (req, res) => {
  */
 app.get('/api/v1/synthesize', async (req, res, next) => {
   try {
-    console.log('TEXT-TO-SPEECH:', req.query.text);
+    // console.log('TEXT-TO-SPEECH:', req.query.text);
     const { result } = await textToSpeech.synthesize(req.query);
     const transcript = result;
     // transcript.on('response', response => {

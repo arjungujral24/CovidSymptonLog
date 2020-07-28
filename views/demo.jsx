@@ -84,10 +84,10 @@ export default class Demo extends Component {
       translatedMessages: [],
       translatedResults: [],
       audioSource: null,
-      speakerLabels: false,
+      speakerLabels: true,
       settingsAtStreamStart: {
         model: '',
-        speakerLabels: false,
+        speakerLabels: true,
       },
     };
 
