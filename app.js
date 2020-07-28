@@ -229,7 +229,7 @@ app.get('/api/v1/translate', async (req, res) => {
 
   // const inputText = req.query.text;
   // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
-  const inputText = 'My windshield was broken so i went to Lydias auto repair. They vaccumed the shatter glass.'
+  const inputText = 'I created a fire by forgetting the food I had in the oven'
   // console.log(inputText);
 
   const analyzeParams = 
@@ -270,7 +270,7 @@ app.get('/api/v1/translate', async (req, res) => {
       // },
 
       'entities': {
-        'model': '4723ec5f-7e27-40d4-9abf-dfd9454eee21'
+        'model': '09d21d6f-e59a-4acb-af2f-cbc053e8eb0e'
       },
       'keywords': {
         'emotion': true,
@@ -283,7 +283,7 @@ app.get('/api/v1/translate', async (req, res) => {
         "sentiment": true
       },
       "relations": {
-        "model": '4723ec5f-7e27-40d4-9abf-dfd9454eee21'
+        "model": '09d21d6f-e59a-4acb-af2f-cbc053e8eb0e'
       },
       "sentiment": {}
     }
