@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+//hello
 const express = require('express');
 
 const app = express();
@@ -228,7 +228,11 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 app.get('/api/v1/translate', async (req, res) => {
 
   const inputText = req.query.text;
-  //console.log(inputText);
+  // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
+  // const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
+  // const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
+  // const inputText = 'I created a fire by forgetting the food I had in the oven'
+  console.log(inputText);
 
   const analyzeParams =
   {
@@ -249,42 +253,136 @@ app.get('/api/v1/translate', async (req, res) => {
       },
 
 
-      'emotion':
-      {
-        'targets':
-          [
-            'fire',
-          ]
-      },
+      // 'emotion': 
+      // {
+      //   'targets': 
+      //   [
+      //     'fire',
+      //   ]
+      // },
+
+      // 'relations':
+      // {
+      //   'model': '4723ec5f-7e27-40d4-9abf-dfd9454eee21'
+      // },
 
       // 'sentiment': 
       // {
       //   'document': true
       // },
-    },
+
+      'entities': {
+        'model': '09d21d6f-e59a-4acb-af2f-cbc053e8eb0e'
+      },
+      // 'keywords': {
+      //   'emotion': true,
+      //   "sentiment": true
+      // },
+      // "emotion": {
+      //   "sentiment": true
+      // },
+      'emotion':
+      {
+        'targets':
+          [
+            'flood','fire'
+          ]
+      },
+      // "categories": {
+      //   "sentiment": true
+      // },
+      "relations": {
+        "model": '09d21d6f-e59a-4acb-af2f-cbc053e8eb0e'
+      },
+      // "sentiment": {}
+    }
   };
 
   try {
     //const ltResult = await naturalLanguageUnderstanding.analyze(analyzeParams);
 
+    const outputNLU = await naturalLanguageUnderstanding.analyze(analyzeParams);
+    console.log('OutputNLU: ' + outputNLU);
+    let obj = await JSON.stringify(outputNLU, null, 2);
+    // req.query.text = await naturalLanguageUnderstanding.analyze(analyzeParams);
+    // let obj = await JSON.stringify(req.query.text, null, 2);
 
-    req.query.text = await naturalLanguageUnderstanding.analyze(analyzeParams);
-    let obj = JSON.stringify(req.query.text, null, 2);
-    let abc = JSON.parse(obj);
-    req.query.text = abc.result.emotion.targets[0].emotion.fear;
+    let abc = await JSON.parse(obj);
+    console.log(abc);
+    // req.query.text = abc.result.emotion.targets[0].emotion.fear;
 
-    if (req.query.text > 0.02) {
-      req.query.text = 'FIRE';
+
+
+    if (abc.result.relations.length == 0) {
+      console.log(typeof(abc.result.emotion));
+      if (abc.result.emotion == undefined) {
+        req.query.text = 'Danger Detected: No Danger';
+        console.log('1');
+      }
+      else if (abc.result.emotion.targets[0].text == 'fire') 
+      {
+        let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
+        let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
+        let parseAnger = await abc.result.emotion.targets[0].emotion.anger; 
+        let dangerScoreFire = await 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
+        if (parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05) 
+        {
+          req.query.text = 'Danger Detected: Fire' + ' Danger Score: ' + dangerScoreFire;
+          console.log('2');
+        }
+        else 
+        {
+          req.query.text = 'Danger Detected: No Danger' + ' Danger Score: 0';
+          console.log('3');
+        }
+      }
+      else 
+      {
+        let parseSadF = await abc.result.emotion.targets[0].emotion.sadness;
+        let parseJoyF = await abc.result.emotion.targets[0].emotion.joy;
+        let parseAngerF = await abc.result.emotion.targets[0].emotion.anger;
+        let dangerScoreFlood = await 1.2*parseSadF + 1.2*parseAngerF - (parseJoyF)/2;
+        if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.20) 
+        {
+          req.query.text = 'Danger Detected: Flood' + ' Danger Score: ' + dangerScoreFlood;
+          console.log('4');
+        }
+        else 
+        {
+          req.query.text = 'Danger Detected: No Danger' + ' Danger Score: 0';
+          console.log('5');
+        }
+        console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
+      }
     }
-    else {
-      req.query.text = 'NO FIRE';
+    else 
+    {
+      let parseScore = await abc.result.relations[0].score;
+      let parseDanger = await abc.result.relations[0].arguments[1].entities[0].disambiguation.subtype[0];
+      let combined = 'Danger Detected: ' + parseDanger + ' Danger Score: ' + parseScore;
+      req.query.text = combined;
     }
+
+    // if (abc.result.relations[0] == null) 
+    // {
+    //   if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.50) 
+    //   {
+    //     req.query.text = 'Danger Detected: Flood';
+    //   }
+    //   else
+    //   {
+    //     req.query.text = 'Danger Detected: No Danger';
+    //   }
+    // }
+    // else
+    // {
+    //   let parseScore = await abc.result.relations[0].score;
+    //   let parseDanger = await abc.result.relations[0].arguments[1].entities[0].disambiguation.subtype[0];
+    //   let combined = 'Danger Detected: ' + parseDanger + ' Danger Score: ' + parseScore;
+    //   req.query.text = combined;
+    // } 
 
     console.log(req.query.text);
-
-
-    // req.query.text = abc.result.sentiment.document.score;
-
 
     naturalLanguageUnderstanding.analyze(analyzeParams)
       .then(analysisResults => {
@@ -293,47 +391,7 @@ app.get('/api/v1/translate', async (req, res) => {
 
     console.log(req.query.text);
 
-
-
-    //req.query.text = ltResult.result.translations[0].translation;
-
-    let outputDemo = '';
-
-    // naturalLanguageUnderstanding.analyze(analyzeParams)
-    // .then(analysisResults => {
-
-    //   let obj = JSON.stringify(analysisResults, null, 2);
-    //   //console.log(obj);
-    //   let abc = JSON.parse(obj);
-    //   //console.log(abc.result.sentiment.document.score);
-    //   outputDemo = abc.result.sentiment.document.score;
-
-    //   //const parseJ = JSON.parse(analysisResults);
-    //   // console.log(JSON.stringify(analysisResults, null, 2));
-    //   // console.log(JSON.stringify(JSON.parse(analysisResults).score, null, 2));
-    // })
-
-
-
-
-    // let textOut = naturalLanguageUnderstanding.analyze(analyzeParams)
-    // .then(analysisResults => {(JSON.stringify(analysisResults, null, 2));
-    // })
-
-    //console.log(textOut);
-    // naturalLanguageUnderstanding.analyze(analyzeParams)
-    // .then(analysisResults => {
-    //   console.log(JSON.stringify(analysisResults, null, 2));
-    //   req.query.text = JSON.stringify(analysisResults, null, 2);
-    // })
-
-    //req.query.text = textOut.stringify();
-
-    //console.log('TRANSLATED:', inputText, ' --->', req.query.text);
-
-    // req.query.text = outputDemo;
-    // console.log(outputDemo);
-    await res.json({ translated: 'Danger Response: ' + req.query.text });
+    await res.json({ translated: req.query.text });
   }
   catch (error) {
     console.log(error);
@@ -346,16 +404,16 @@ app.get('/api/v1/translate', async (req, res) => {
  */
 app.get('/api/v1/synthesize', async (req, res, next) => {
   try {
-    //console.log('TEXT-TO-SPEECH:', req.query.text);
+    // console.log('TEXT-TO-SPEECH:', req.query.text);
     const { result } = await textToSpeech.synthesize(req.query);
     const transcript = result;
-    transcript.on('response', response => {
-      if (req.query.download) {
-        response.headers['content-disposition'] = `attachment; filename=transcript.${getFileExtension(req.query.accept)}`;
-      }
-    });
-    transcript.on('error', next);
-    transcript.pipe(res);
+    // transcript.on('response', response => {
+    //   if (req.query.download) {
+    //     response.headers['content-disposition'] = `attachment; filename=transcript.${getFileExtension(req.query.accept)}`;
+    //   }
+    // });
+    // transcript.on('error', next);
+    // transcript.pipe(res);
   } catch (error) {
     console.log(error);
     res.send(error);
@@ -379,3 +437,4 @@ app.get('/api/v1/voices', async (req, res, next) => {
 require('./config/error-handler')(app);
 
 module.exports = app;
+
