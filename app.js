@@ -437,4 +437,3 @@ app.get('/api/v1/voices', async (req, res, next) => {
 require('./config/error-handler')(app);
 
 module.exports = app;
-
