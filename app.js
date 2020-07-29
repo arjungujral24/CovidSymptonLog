@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+//hello
 const express = require('express');
 
 const app = express();
@@ -227,8 +227,8 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 
 app.get('/api/v1/translate', async (req, res) => {
 
-  const inputText = req.query.text;
-  // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
+  // const inputText = req.query.text;
+  const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
   // const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
   // const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
   // const inputText = 'I created a fire by forgetting the food I had in the oven'
@@ -239,18 +239,18 @@ app.get('/api/v1/translate', async (req, res) => {
     'text': inputText,
     'features':
     {
-      // 'entities': 
-      // {
-      //   'emotion': true,
-      //   'sentiment': true,
-      //   'limit': 2,
-      // },
-      // 'keywords': 
-      // {
-      //   'emotion': true,
-      //   'sentiment': true,
-      //   'limit': 2,
-      // },
+      'entities':
+      {
+        'emotion': true,
+        'sentiment': true,
+        'limit': 2,
+      },
+      'keywords':
+      {
+        'emotion': true,
+        'sentiment': true,
+        'limit': 2,
+      },
 
 
       // 'emotion': 
@@ -327,7 +327,7 @@ app.get('/api/v1/translate', async (req, res) => {
         let dangerScoreFire = await 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
         if (parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05) 
         {
-          req.query.text = 'Danger Detected: Fire' + ' Danger Score: ' + dangerScoreFire;
+          req.query.text = 'Danger Detected: Fire' + '\n' + ' Danger Score: ' + dangerScoreFire;
           console.log('2');
         }
         else 

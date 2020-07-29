@@ -594,7 +594,7 @@ export default class Demo extends Component {
     let transcribedText = '';
     let ttsCheckbox =
       <fieldset className="bx--fieldset">
-        <Checkbox defaultChecked labelText="Enable Sentiment" onChange={this.onSpeak} id="checked" />
+        {/* <Checkbox defaultChecked labelText="Enable Sentiment" onChange={this.onSpeak} id="checked" /> */}
       </fieldset>;
 
     let audioRefError =
@@ -667,18 +667,18 @@ export default class Demo extends Component {
           if (translating) {
             ltButton =
               <button type="button" onClick={this.handleTranslateClick}>
-                <Icon type='stop' fill={Colors.red_50} /> Loading Sentiment...
+                <Icon type='stop' fill={Colors.red_50} /> Detecting Danger...
               </button>
           } else {
             ltButton =
               <button type="button" onClick={this.handleTranslateClick}>
-                <Icon type='plus' fill={Colors.purple_50} /> Sentiment
+                <Icon type='plus' fill={Colors.purple_50} /> Detect Danger
               </button>
           }
 
           translatedText =
             <Tabs selected={0}>
-              <Pane label="Sentiment Log">
+              <Pane label="Danger Results">
                 <Transcript messages={translatedTranscript} />
               </Pane>
             </Tabs>
@@ -716,7 +716,7 @@ export default class Demo extends Component {
       <section className="_container _container_large">
         <div className="row">
           <h1 className="base--h1 title">
-            <b>Covid Symptom Log</b>
+            <b>Danger Response Tool</b>
           </h1>
         </div>
         <div className="row">

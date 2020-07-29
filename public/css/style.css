@@ -1,3 +1,6 @@
+body {
+  background-color:#061727;
+}
 .textarea {
   width: 100%;
   border: 0px;
@@ -7,7 +10,7 @@
 }
 
 .tab-panels--tab-content {
-  padding: 1rem;
+  padding: 2rem;
 }
 
 .bx--checkbox {
@@ -15,11 +18,11 @@
 }
 
 input:checked[type=checkbox]+label::before {
-  background: #9855d4;
+  background: #31135e;
 }
 
 .bx--checkbox-label {
-  color: #9855d4;
+  color: #31135e;
   margin-top: 0;
 }
 
@@ -96,9 +99,9 @@ input:checked[type=checkbox]+label::before {
 
 .base--h1.title {
   margin-top: 0rem;
-  font-size: 1.25em;
+  font-size: 4.00em;
   color: white;
-  background-color: #965ad0;
+  background-color: #061727;
   padding: 0.5em;
   opacity: 0.8;
 }
@@ -107,7 +110,7 @@ input:checked[type=checkbox]+label::before {
   margin-top: 0rem;
   font-size: 1.0em;
   font-weight: bold;
-  color: #965ad0;
+  color: #a56eff;
 }
 
 .dimmed {
