@@ -230,8 +230,8 @@ app.get('/api/v1/translate', async (req, res) => {
   // const inputText = req.query.text;
   // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
   // const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
-  const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
-  // const inputText = 'I created a fire by forgetting the food I had in the oven'
+  // const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
+  const inputText = 'I created a fire by forgetting the food I had in the oven'
   console.log(inputText);
 
   const analyzeParams =
@@ -313,8 +313,9 @@ app.get('/api/v1/translate', async (req, res) => {
 
     // console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
 
-    if (abc.result.relations[0] == null) {
-      if (abc.result.emotion.targets == null) {
+    if (abc.result.relations.length == 0) {
+      console.log(typeof(abc.result.emotion));
+      if (abc.result.emotion == undefined) {
         req.query.text = 'Danger Detected: No Danger';
         console.log('1');
       }
