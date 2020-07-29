@@ -227,11 +227,11 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 
 app.get('/api/v1/translate', async (req, res) => {
 
-  // const inputText = req.query.text;
+  const inputText = req.query.text;
   // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
   // const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
   // const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
-  const inputText = 'I created a fire by forgetting the food I had in the oven'
+  // const inputText = 'I created a fire by forgetting the food I had in the oven'
   console.log(inputText);
 
   const analyzeParams =
@@ -311,7 +311,7 @@ app.get('/api/v1/translate', async (req, res) => {
     console.log(abc);
     // req.query.text = abc.result.emotion.targets[0].emotion.fear;
 
-    // console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
+
 
     if (abc.result.relations.length == 0) {
       console.log(typeof(abc.result.emotion));
@@ -324,14 +324,15 @@ app.get('/api/v1/translate', async (req, res) => {
         let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
         let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
         let parseAnger = await abc.result.emotion.targets[0].emotion.anger; 
+        let dangerScoreFire = await 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
         if (parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05) 
         {
-          req.query.text = 'Danger Detected: Fire';
+          req.query.text = 'Danger Detected: Fire' + ' Danger Score: ' + dangerScoreFire;
           console.log('2');
         }
         else 
         {
-          req.query.text = 'Danger Detected: No Danger';
+          req.query.text = 'Danger Detected: No Danger' + ' Danger Score: 0';
           console.log('3');
         }
       }
@@ -340,17 +341,18 @@ app.get('/api/v1/translate', async (req, res) => {
         let parseSadF = await abc.result.emotion.targets[0].emotion.sadness;
         let parseJoyF = await abc.result.emotion.targets[0].emotion.joy;
         let parseAngerF = await abc.result.emotion.targets[0].emotion.anger;
-
-        if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.50) 
+        let dangerScoreFlood = await 1.2*parseSadF + 1.2*parseAngerF - (parseJoyF)/2;
+        if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.20) 
         {
-          req.query.text = 'Danger Detected: Flood';
+          req.query.text = 'Danger Detected: Flood' + ' Danger Score: ' + dangerScoreFlood;
           console.log('4');
         }
         else 
         {
-          req.query.text = 'Danger Detected: No Danger';
+          req.query.text = 'Danger Detected: No Danger' + ' Danger Score: 0';
           console.log('5');
         }
+        console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
       }
     }
     else 
