@@ -96,7 +96,7 @@ speechToText
     speechModels = response.result.models.filter(model => model.rate > 8000); // TODO: Make it a .env setting
     // Make description be `[lang] description` so the sort-by-lang makes sense.
     speechModels = speechModels.map(m => ({ ...m, description: `[${m.language}]  ${m.description}` }));
-    speechModels.sort(function(a, b) {  // eslint-disable-line
+    speechModels.sort(function (a, b) {  // eslint-disable-line
       // Sort by 1 - language, 2 - description.
       return a.language.localeCompare(b.language) || a.description.localeCompare(b.description);
     });
@@ -229,13 +229,15 @@ app.get('/api/v1/translate', async (req, res) => {
 
   // const inputText = req.query.text;
   // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
-  const inputText = 'I created a fire by forgetting the food I had in the oven'
-  // console.log(inputText);
+  // const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
+  const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
+  // const inputText = 'I created a fire by forgetting the food I had in the oven'
+  console.log(inputText);
 
-  const analyzeParams = 
+  const analyzeParams =
   {
     'text': inputText,
-    'features': 
+    'features':
     {
       // 'entities': 
       // {
@@ -272,25 +274,31 @@ app.get('/api/v1/translate', async (req, res) => {
       'entities': {
         'model': '09d21d6f-e59a-4acb-af2f-cbc053e8eb0e'
       },
-      'keywords': {
-        'emotion': true,
-        "sentiment": true
+      // 'keywords': {
+      //   'emotion': true,
+      //   "sentiment": true
+      // },
+      // "emotion": {
+      //   "sentiment": true
+      // },
+      'emotion':
+      {
+        'targets':
+          [
+            'flood','fire'
+          ]
       },
-      "emotion": {
-          "sentiment": true
-      },
-      "categories": {
-        "sentiment": true
-      },
+      // "categories": {
+      //   "sentiment": true
+      // },
       "relations": {
         "model": '09d21d6f-e59a-4acb-af2f-cbc053e8eb0e'
       },
-      "sentiment": {}
+      // "sentiment": {}
     }
   };
 
-  try 
-  {
+  try {
     //const ltResult = await naturalLanguageUnderstanding.analyze(analyzeParams);
 
     const outputNLU = await naturalLanguageUnderstanding.analyze(analyzeParams);
@@ -303,85 +311,86 @@ app.get('/api/v1/translate', async (req, res) => {
     console.log(abc);
     // req.query.text = abc.result.emotion.targets[0].emotion.fear;
 
-    // let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
-    // let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
-    // let parseAnger = await abc.result.emotion.targets[0].emotion.anger;
-    // console.log('ParseSad: ' + parseSad + ' ParseJoy ' + parseJoy + ' ParseAnger ' + parseAnger);
+    // console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
 
-    let parseRelation = await abc.result.relations.type;
+    if (abc.result.relations[0] == null) {
+      if (abc.result.emotion.targets == null) {
+        req.query.text = 'Danger Detected: No Danger';
+        console.log('1');
+      }
+      else if (abc.result.emotion.targets[0].text == 'fire') 
+      {
+        let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
+        let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
+        let parseAnger = await abc.result.emotion.targets[0].emotion.anger; 
+        if (parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05) 
+        {
+          req.query.text = 'Danger Detected: Fire';
+          console.log('2');
+        }
+        else 
+        {
+          req.query.text = 'Danger Detected: No Danger';
+          console.log('3');
+        }
+      }
+      else 
+      {
+        let parseSadF = await abc.result.emotion.targets[0].emotion.sadness;
+        let parseJoyF = await abc.result.emotion.targets[0].emotion.joy;
+        let parseAngerF = await abc.result.emotion.targets[0].emotion.anger;
 
+        if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.50) 
+        {
+          req.query.text = 'Danger Detected: Flood';
+          console.log('4');
+        }
+        else 
+        {
+          req.query.text = 'Danger Detected: No Danger';
+          console.log('5');
+        }
+      }
+    }
+    else 
+    {
+      let parseScore = await abc.result.relations[0].score;
+      let parseDanger = await abc.result.relations[0].arguments[1].entities[0].disambiguation.subtype[0];
+      let combined = 'Danger Detected: ' + parseDanger + ' Danger Score: ' + parseScore;
+      req.query.text = combined;
+    }
 
-    // req.query.text = abc.result.sentiment.document;
-
-
-    // if(parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05)
+    // if (abc.result.relations[0] == null) 
     // {
-    //   req.query.text = 'FIRE';
+    //   if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.50) 
+    //   {
+    //     req.query.text = 'Danger Detected: Flood';
+    //   }
+    //   else
+    //   {
+    //     req.query.text = 'Danger Detected: No Danger';
+    //   }
     // }
     // else
     // {
-    //   req.query.text = 'NO FIRE';
-    // }
-
-    req.query.text = parseRelation;
+    //   let parseScore = await abc.result.relations[0].score;
+    //   let parseDanger = await abc.result.relations[0].arguments[1].entities[0].disambiguation.subtype[0];
+    //   let combined = 'Danger Detected: ' + parseDanger + ' Danger Score: ' + parseScore;
+    //   req.query.text = combined;
+    // } 
 
     console.log(req.query.text);
-
-
-    // req.query.text = abc.result.sentiment.document.score;
-
 
     naturalLanguageUnderstanding.analyze(analyzeParams)
-    .then(analysisResults => {
-    console.log(JSON.stringify(analysisResults, null, 2));
-    })
+      .then(analysisResults => {
+        console.log(JSON.stringify(analysisResults, null, 2));
+      })
 
     console.log(req.query.text);
 
-
-
-    //req.query.text = ltResult.result.translations[0].translation;
-
-    let outputDemo = '';
-
-    // naturalLanguageUnderstanding.analyze(analyzeParams)
-    // .then(analysisResults => {
-
-    //   let obj = JSON.stringify(analysisResults, null, 2);
-    //   //console.log(obj);
-    //   let abc = JSON.parse(obj);
-    //   //console.log(abc.result.sentiment.document.score);
-    //   outputDemo = abc.result.sentiment.document.score;
-      
-    //   //const parseJ = JSON.parse(analysisResults);
-    //   // console.log(JSON.stringify(analysisResults, null, 2));
-    //   // console.log(JSON.stringify(JSON.parse(analysisResults).score, null, 2));
-    // })
-
-    
-
-
-    // let textOut = naturalLanguageUnderstanding.analyze(analyzeParams)
-    // .then(analysisResults => {(JSON.stringify(analysisResults, null, 2));
-    // })
-
-    //console.log(textOut);
-    // naturalLanguageUnderstanding.analyze(analyzeParams)
-    // .then(analysisResults => {
-    //   console.log(JSON.stringify(analysisResults, null, 2));
-    //   req.query.text = JSON.stringify(analysisResults, null, 2);
-    // })
-
-    //req.query.text = textOut.stringify();
-
-    //console.log('TRANSLATED:', inputText, ' --->', req.query.text);
-
-    // req.query.text = outputDemo;
-    // console.log(outputDemo);
-    await res.json({ translated: 'Danger Response: ' + req.query.text });
-  } 
-  catch (error) 
-  {
+    await res.json({ translated: req.query.text });
+  }
+  catch (error) {
     console.log(error);
     res.send(error);
   }
