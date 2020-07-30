@@ -228,8 +228,8 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 app.get('/api/v1/translate', async (req, res) => {
 
   // const inputText = req.query.text;
-  const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
-  // const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
+  // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
+  const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
   // const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
   // const inputText = 'I created a fire by forgetting the food I had in the oven'
   console.log(inputText);
@@ -324,7 +324,7 @@ app.get('/api/v1/translate', async (req, res) => {
         let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
         let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
         let parseAnger = await abc.result.emotion.targets[0].emotion.anger; 
-        let dangerScoreFire = await 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
+        let dangerScoreFire = await 0.3+ 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
         if (parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05) 
         {
           req.query.text = 'Danger Detected: Fire' + '\n' + ' Danger Score: ' + dangerScoreFire;
@@ -332,7 +332,7 @@ app.get('/api/v1/translate', async (req, res) => {
         }
         else 
         {
-          req.query.text = 'Danger Detected: No Danger' + ' Danger Score: 0';
+          req.query.text = 'Danger Detected: None' + ' Danger Score: 0';
           console.log('3');
         }
       }
@@ -349,7 +349,7 @@ app.get('/api/v1/translate', async (req, res) => {
         }
         else 
         {
-          req.query.text = 'Danger Detected: No Danger' + ' Danger Score: 0';
+          req.query.text = 'Danger Detected: None' + ' Danger Score: 0';
           console.log('5');
         }
         console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
