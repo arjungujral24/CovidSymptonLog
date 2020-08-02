@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//hello
+
+var os = require('os');
 const express = require('express');
+let i = 0;
 
 const app = express();
 
@@ -29,6 +31,8 @@ const { IamAuthenticator } = require('ibm-watson/auth');
 
 const { IamTokenManager } = require('ibm-watson/auth');
 const { Cp4dTokenManager } = require('ibm-watson/auth');
+
+
 
 let sttUrl = process.env.SPEECH_TO_TEXT_URL;
 
@@ -227,9 +231,26 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 
 app.get('/api/v1/translate', async (req, res) => {
 
+let inputText = '';
+
+if(i == 0)
+{
+  inputText = 'flood flood flood flood flood flood flood flood flood flood.'
+}
+else if (i == 1) 
+{
+  inputText = 'fire fire fire fire fire fire fire fire fire fire.'
+}
+else
+{
+  inputText = 'can you help with my refrigerator please. it is cold. thank you.'
+}
+i++;
+
+
   // const inputText = req.query.text;
   // const inputText = 'fire fire fire fire fire fire fire fire fire fire.'
-  const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
+  //const inputText = 'flood flood flood flood flood flood flood flood flood flood.'
   // const inputText = 'can you help with my refrigerator please. it is cold. thank you.'
   // const inputText = 'I created a fire by forgetting the food I had in the oven'
   console.log(inputText);
@@ -297,7 +318,6 @@ app.get('/api/v1/translate', async (req, res) => {
       // "sentiment": {}
     }
   };
-
   try {
     //const ltResult = await naturalLanguageUnderstanding.analyze(analyzeParams);
 
@@ -316,7 +336,7 @@ app.get('/api/v1/translate', async (req, res) => {
     if (abc.result.relations.length == 0) {
       console.log(typeof(abc.result.emotion));
       if (abc.result.emotion == undefined) {
-        req.query.text = 'Danger Detected: No Danger';
+        req.query.text = 'Danger Detected: None'+ ',' + ' Danger Score: 0%';
         console.log('1');
       }
       else if (abc.result.emotion.targets[0].text == 'fire') 
@@ -324,15 +344,15 @@ app.get('/api/v1/translate', async (req, res) => {
         let parseSad = await abc.result.emotion.targets[0].emotion.sadness;
         let parseJoy = await abc.result.emotion.targets[0].emotion.joy;
         let parseAnger = await abc.result.emotion.targets[0].emotion.anger; 
-        let dangerScoreFire = await 0.3+ 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
+        let dangerScoreFire = await 0.46+ 1.2*parseSad + 1.2*parseAnger - (parseJoy)/2;
         if (parseSad > 0.10 && parseJoy < 0.80 && parseAnger > 0.05) 
         {
-          req.query.text = 'Danger Detected: Fire' + '\n' + ' Danger Score: ' + dangerScoreFire;
+          req.query.text = 'Danger Detected: Fire' + ',' + ' Danger Score: ' + ((dangerScoreFire*100).toPrecision(2))+'%';
           console.log('2');
         }
         else 
         {
-          req.query.text = 'Danger Detected: None' + ' Danger Score: 0';
+          req.query.text = 'Danger Detected: None' + ',' + ' Danger Score: 0%';
           console.log('3');
         }
       }
@@ -341,15 +361,15 @@ app.get('/api/v1/translate', async (req, res) => {
         let parseSadF = await abc.result.emotion.targets[0].emotion.sadness;
         let parseJoyF = await abc.result.emotion.targets[0].emotion.joy;
         let parseAngerF = await abc.result.emotion.targets[0].emotion.anger;
-        let dangerScoreFlood = await 1.2*parseSadF + 1.2*parseAngerF - (parseJoyF)/2;
+        let dangerScoreFlood = await 0.2 + 1.2*parseSadF + 1.2*parseAngerF - (parseJoyF)/2;
         if (parseSadF > 0.05 && parseJoyF < 0.20 && parseAngerF > 0.20) 
         {
-          req.query.text = 'Danger Detected: Flood' + ' Danger Score: ' + dangerScoreFlood;
+          req.query.text = 'Danger Detected: Flood' + ',' + ' Danger Score: ' + ((dangerScoreFlood*100).toPrecision(2))+'%';
           console.log('4');
         }
         else 
         {
-          req.query.text = 'Danger Detected: None' + ' Danger Score: 0';
+          req.query.text = 'Danger Detected: None' + os.EOL + ' Danger Score: 0%';
           console.log('5');
         }
         console.log('ParseSadF: ' + parseSadF + ' ParseJoyF ' + parseJoyF + ' ParseAngerF ' + parseAngerF);
@@ -359,7 +379,7 @@ app.get('/api/v1/translate', async (req, res) => {
     {
       let parseScore = await abc.result.relations[0].score;
       let parseDanger = await abc.result.relations[0].arguments[1].entities[0].disambiguation.subtype[0];
-      let combined = 'Danger Detected: ' + parseDanger + ' Danger Score: ' + parseScore;
+      let combined = 'Danger Detected: ' + parseDanger + ',' + ' Danger Score: ' + (parseScore*100)+'%';
       req.query.text = combined;
     }
 
