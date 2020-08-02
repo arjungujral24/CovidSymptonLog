@@ -142,6 +142,19 @@ input:checked[type=checkbox]+label::before {
   }
 }
 
+.speaker-labels {
+  margin-left: 0px;
+}
+
+/* Speaker View styles */
+.speaker-labels dt {
+  font-weight: bold;
+  display: inline;
+}
+.speaker-labels dd {
+  display: inline;
+}
+
 div.row {
   width: 100%;
 }
