@@ -15,16 +15,13 @@
  */
 
 /* eslint camelcase: off */
-import React, { Component } from 'react';
-import { Checkbox } from 'carbon-components-react';
-import { Colors, Icon, Pane, Tabs } from 'watson-react-components';
+import React, {Component} from 'react';
+import {Checkbox} from 'carbon-components-react';
+import {Colors, Icon, Pane, Tabs} from 'watson-react-components';
 import recognizeMicrophone from 'watson-speech/speech-to-text/recognize-microphone';
 import 'whatwg-fetch';
 import Transcript from './transcript.jsx'
 import JSONView from './json-view.jsx'
-import samples from '../src/data/samples.json';
-import cachedModels from '../src/data/models.json';
-import SpeakersView from './speaker.jsx';
 
 /**
  * @return {Function} A polyfill for URLSearchParams
@@ -65,7 +62,7 @@ const canPlayAudioFormat = (mimeType) => {
 // Start with the default voice until the list is loaded.
 const INIT_MODEL = { name: 'init', description: 'Loading...' };
 const INIT_VOICE = { name: 'init', description: 'Loading...' };
-const INIT_MODELS = [INIT_MODEL];
+const INIT_MODELS = [ INIT_MODEL ];
 
 export default class Demo extends Component {
   constructor(props) {
@@ -79,7 +76,7 @@ export default class Demo extends Component {
       loading: false,
       modelMap: {},
       models: INIT_MODELS,
-      model: 'en-US_BroadBandModel',
+      model: INIT_MODEL,
       rawMessages: [],
       formattedMessages: [],
       translating: false,
@@ -87,7 +84,7 @@ export default class Demo extends Component {
       translatedMessages: [],
       translatedResults: [],
       audioSource: null,
-      speakerLabels: true,
+      speakerLabels: false,
       settingsAtStreamStart: {
         model: '',
         speakerLabels: false,
@@ -114,8 +111,6 @@ export default class Demo extends Component {
     this.doLanguageTranslation = this.doLanguageTranslation.bind(this);
     this.handleStream = this.handleStream.bind(this);
     this.handleRawMessage = this.handleRawMessage.bind(this);
-    this.supportsSpeakerLabels = this.supportsSpeakerLabels.bind(this);
-    this.handleSpeakerLabelsChange = this.handleSpeakerLabelsChange.bind(this);
     this.handleFormattedMessage = this.handleFormattedMessage.bind(this);
     this.handleTranscriptEnd = this.handleTranscriptEnd.bind(this);
     this.getFinalResults = this.getFinalResults.bind(this);
@@ -278,41 +273,41 @@ export default class Demo extends Component {
     }
 
     Promise.all(promises).then(values => {
-      for (let i = 0; i < finals.length; i += 1) {
-        if (values[i] && values[i].translated) {
-          translatedResults[i] = { results: [{ alternatives: [{ transcript: values[i].translated }] }] };
-        }
-      }
-      this.setState({ translatedResults });
-
-      if (speaking) {
-        let text = false;
-        if (sayAll) {
-          // Say all the translated values (to catch-up when button is pushed).
-          text = values.map(v => v.translated);
-        } else if (finals[finals.length - 1].results[0].final) {
-          // Only say the last final value (for speaking while transcribing/translating).
-          if (values[finals.length - 1]) {
-            text = [values[finals.length - 1].translated];
+        for (let i = 0; i < finals.length; i += 1) {
+          if (values[i] && values[i].translated) {
+            translatedResults[i] = {results: [{alternatives: [{transcript: values[i].translated}]}]};
           }
         }
+        this.setState({ translatedResults });
 
-        if (text && text.length) {
-          const params = this.setupParamsForTranslate(text);
-          params.set('download', true);
-          if (canPlayAudioFormat('audio/mp3')) {
-            params.set('accept', 'audio/mp3');
-          } else if (canPlayAudioFormat('audio/ogg;codec=opus')) {
-            params.set('accept', 'audio/ogg;codec=opus');
-          } else if (canPlayAudioFormat('audio/wav')) {
-            params.set('accept', 'audio/wav');
+        if (speaking) {
+          let text = false;
+          if (sayAll) {
+            // Say all the translated values (to catch-up when button is pushed).
+            text = values.map(v => v.translated);
+          } else if (finals[finals.length - 1].results[0].final) {
+            // Only say the last final value (for speaking while transcribing/translating).
+            if (values[finals.length - 1]) {
+              text = [values[finals.length - 1].translated];
+            }
           }
-          const audio = this.audioElementRef.current;
-          audio.setAttribute('type', 'audio/ogg;codecs=opus');
-          audio.setAttribute('src', `/api/v1/synthesize?${params.toString()}`);
-          this.setState({ loading: true, hasAudio: false });
+
+          if (text && text.length) {
+            const params = this.setupParamsForTranslate(text);
+            params.set('download', true);
+            if (canPlayAudioFormat('audio/mp3')) {
+              params.set('accept', 'audio/mp3');
+            } else if (canPlayAudioFormat('audio/ogg;codec=opus')) {
+              params.set('accept', 'audio/ogg;codec=opus');
+            } else if (canPlayAudioFormat('audio/wav')) {
+              params.set('accept', 'audio/wav');
+            }
+            const audio = this.audioElementRef.current;
+            audio.setAttribute('type', 'audio/ogg;codecs=opus');
+            audio.setAttribute('src', `/api/v1/synthesize?${params.toString()}`);
+            this.setState({loading: true, hasAudio: false});
+          }
         }
-      }
     })
   }
 
@@ -348,19 +343,6 @@ export default class Demo extends Component {
     return final;
   }
 
-  supportsSpeakerLabels(model) {
-    model = model || this.state.model;
-    // todo: read the upd-to-date models list instead of the cached one
-    return cachedModels.some(m => m.name === model && m.supported_features.speaker_labels);
-  }
-
-  handleSpeakerLabelsChange() {
-    this.setState(prevState => ({ speakerLabels: !prevState.speakerLabels }));
-  }
-  getKeywordsArr() {
-    return this.state.keywords.split(',').map(k => k.trim()).filter(k => k);
-  }
-
   handleError(err, extra) {
     console.error(err, extra);
     if (err.name === 'UNRECOGNIZED_FORMAT') {
@@ -375,7 +357,6 @@ export default class Demo extends Component {
     }
     this.setState({ error: err.message || err });
   }
-
 
   stopTranscription() {
     if (this.stream) {
@@ -467,27 +448,27 @@ export default class Demo extends Component {
           throw new Error('Error retrieving translation');
         }
         return res.json();
-      })
-      .then((result) => {
-        if (sayIt) {
-          params.set('text', result.translated);
-          params.set('download', true);
-          if (canPlayAudioFormat('audio/mp3')) {
-            params.set('accept', 'audio/mp3');
-          } else if (canPlayAudioFormat('audio/ogg;codec=opus')) {
-            params.set('accept', 'audio/ogg;codec=opus');
-          } else if (canPlayAudioFormat('audio/wav')) {
-            params.set('accept', 'audio/wav');
+        })
+        .then((result) => {
+          if (sayIt) {
+            params.set('text', result.translated );
+            params.set('download', true);
+            if (canPlayAudioFormat('audio/mp3')) {
+              params.set('accept', 'audio/mp3');
+            } else if (canPlayAudioFormat('audio/ogg;codec=opus')) {
+              params.set('accept', 'audio/ogg;codec=opus');
+            } else if (canPlayAudioFormat('audio/wav')) {
+              params.set('accept', 'audio/wav');
+            }
+            const audio = this.audioElementRef.current;
+            audio.setAttribute('type', 'audio/ogg;codecs=opus');
+            audio.setAttribute('src', `/api/v1/synthesize?${params.toString()}`);
+            this.setState({loading: true, hasAudio: false});
           }
-          const audio = this.audioElementRef.current;
-          audio.setAttribute('type', 'audio/ogg;codecs=opus');
-          audio.setAttribute('src', `/api/v1/synthesize?${params.toString()}`);
-          this.setState({ loading: true, hasAudio: false });
-        }
-        return result;
-      }) // todo: throw here if non-200 status
-      .catch(this.handleError);
-  }
+          return result;
+        }) // todo: throw here if non-200 status
+        .catch(this.handleError);
+    }
 
   onAudioLoaded() {
     this.setState({ loading: false, hasAudio: true });
@@ -495,7 +476,7 @@ export default class Demo extends Component {
 
   onSpeak(checked) {
     // console.log("Enable Text to Speech:", checked);
-    this.setState({ speaking: checked });
+    this.setState({speaking: checked});
   }
 
   onModelChange(event) {
@@ -513,8 +494,8 @@ export default class Demo extends Component {
     this.state.target_voices = this.state.voices.filter(
       voice =>
         model_language === voice.language.substring(0, 2) || // same language (no translate)
-        (model_targets && model_targets.includes(voice.language.substring(0, 2)))).sort(
-          function (a, b) { return a.language.localeCompare(b.language) || a.description.localeCompare(b.description); });
+        ( model_targets && model_targets.includes(voice.language.substring(0, 2)))).sort(
+          function(a, b) { return a.language.localeCompare(b.language) || a.description.localeCompare(b.description); });
 
     this.setState({
       model,
@@ -600,14 +581,14 @@ export default class Demo extends Component {
 
   render() {
     const {
-      audioSource, target_voices, speakerLabels, voice, settingsAtStreamStart, models, model, error,
+      audioSource, target_voices, voice, models, model, error,
       formattedMessages, rawMessages, translatedResults, translating
     } = this.state;
 
     const messages = this.getFinalAndLatestInterimResult();
     const translatedTranscript = [];
     for (let i = 0; i < translatedResults.length; i += 1) {
-      translatedTranscript.push({ result_index: i, ...translatedResults[i] });
+      translatedTranscript.push({result_index: i, ...translatedResults[i]});
     }
 
     let transcribedText = '';
@@ -617,17 +598,17 @@ export default class Demo extends Component {
       </fieldset>;
 
     let audioRefError =
-      <div className="output-container">
-        <div className={`errorMessage ${error ? '' : 'hidden'}`}>
-          <Icon type="error" />
-          <p className="base--p service-error--message">
-            {error ? error.error : ''}
-          </p>
-        </div>
-        <audio ref={this.audioElementRef} autoPlay id="audio" className='hidden' controls="controls">
-          Your browser does not support the audio element.
+        <div className="output-container">
+          <div className={`errorMessage ${error ? '' : 'hidden'}`}>
+            <Icon type="error" />
+            <p className="base--p service-error--message">
+              {error ? error.error : ''}
+            </p>
+          </div>
+          <audio ref={this.audioElementRef} autoPlay id="audio" className='hidden' controls="controls">
+            Your browser does not support the audio element.
           </audio>
-      </div>;
+        </div>;
 
     let voice_name = null;
     if (voice) {
@@ -662,9 +643,7 @@ export default class Demo extends Component {
       transcribedText =
         <Tabs selected={0} >
           <Pane label="Transcribed">
-            {settingsAtStreamStart.speakerLabels
-              ? <SpeakersView messages={messages} />
-              : <Transcript messages={messages} />}
+            <Transcript messages={messages} />
           </Pane>
           <Pane label="JSON">
             <JSONView raw={rawMessages} formatted={formattedMessages} />
@@ -685,24 +664,24 @@ export default class Demo extends Component {
       } else {
 
         // if (voice.language !== model.language) {
-        if (translating) {
-          ltButton =
-            <button type="button" onClick={this.handleTranslateClick}>
-              <Icon type='stop' fill={Colors.red_50} /> Loading Sentiment...
+          if (translating) {
+            ltButton =
+              <button type="button" onClick={this.handleTranslateClick}>
+                <Icon type='stop' fill={Colors.red_50} /> Loading Sentiment...
               </button>
-        } else {
-          ltButton =
-            <button type="button" onClick={this.handleTranslateClick}>
-              <Icon type='plus' fill={Colors.purple_50} /> Sentiment
+          } else {
+            ltButton =
+              <button type="button" onClick={this.handleTranslateClick}>
+                <Icon type='plus' fill={Colors.purple_50} /> Sentiment
               </button>
-        }
+          }
 
-        translatedText =
-          <Tabs selected={0}>
-            <Pane label="Sentiment Log">
-              <Transcript messages={translatedTranscript} />
-            </Pane>
-          </Tabs>
+          translatedText =
+            <Tabs selected={0}>
+              <Pane label="Sentiment Log">
+                <Transcript messages={translatedTranscript} />
+              </Pane>
+            </Tabs>
         // }
         outputVoices =
           <select
@@ -769,7 +748,7 @@ export default class Demo extends Component {
             </div>
             <div className="row">
               <h2 className="base--h2 title">
-                {/* 
+              {/* 
             Output Language and Voice:
             */}
               </h2>
@@ -783,19 +762,6 @@ export default class Demo extends Component {
                 {audioRefError}
               </div>
             </div>
-            <p className={this.supportsSpeakerLabels() ? 'base--p' : 'base--p_light'}>
-              <input
-                className="base--checkbox"
-                type="checkbox"
-                checked={speakerLabels}
-                onChange={this.handleSpeakerLabelsChange}
-                disabled={!this.supportsSpeakerLabels()}
-                id="speaker-labels"
-              />
-              {<label className="base--inline-label" htmlFor="speaker-labels">
-                Detect multiple speakers {this.supportsSpeakerLabels() ? '' : ' (Not supported on current model)'}
-              </label>}
-            </p>
           </div>
         </div>
       </section>
