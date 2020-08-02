@@ -27,7 +27,7 @@ function Layout(props) {
     <html lang="en">
       <head>
         <title>
-          Speech Translator with Watson
+          Danger Response with Watson
         </title>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
