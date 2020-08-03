@@ -24,9 +24,6 @@ When you have completed this code pattern, you will understand how to:
 
 ![architecture](doc/source/images/architecture.png)
 
-## Demo
-![Demo](Final GIF.gif)
-
 ## Flow
 
 1. User selects their preferred language.
@@ -48,8 +45,7 @@ When you have completed this code pattern, you will understand how to:
 Provision the following services:
 
 * **Speech to Text**
-* **Language Translator**
-* **Text to Speech**
+* **Natural Language Understanding**
 
 The instructions will depend on whether you are provisioning services using IBM Cloud Pak for Data or on IBM Cloud.
 
@@ -83,8 +79,7 @@ The services are not available by default. An administrator must install them on
   <ul>
     <li>If you do not have an IBM Cloud account, register for a free trial account <a href="https://cloud.ibm.com/registration">here</a>.</li>
     <li>Click <a href="https://cloud.ibm.com/catalog/services/speech-to-text">here</a> to create a <b>Speech to Text</b> instance.</li>
-    <li>Click <a href="https://cloud.ibm.com/catalog/services/language-translator">here</a> to create a <b>Language Translator</b> instance.</li>
-    <li>Click <a href="https://cloud.ibm.com/catalog/services/text-to-speech">here</a> to create a <b>Text to Speech</b> instance.</li>
+    <li>Click <a href="https://cloud.ibm.com/catalog/services/natural-language-understanding">here</a> to create a <b>Language Translator</b> instance.</li>
   </ul>
 <h5>Gather credentials</h5>
   <ol>
