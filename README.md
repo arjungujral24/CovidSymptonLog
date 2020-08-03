@@ -4,12 +4,17 @@ In moments of a disaster such as fires, floods, and shootings, victims need firs
 
 How can we develop a solution that will reduce the response time of first responders, and provide a positive impact for those who need it most? Well, when a victim is normally in danger, they call 911 and begin a dialogue with a dispatcher. While this conversation is ongoing, the Watson Danger Response Tool will screen the conversation for select dangers including fires and floods. If one of those dangers are identified, the appropriate authorities will be immediately alerted, thus shaving off precious seconds and sometimes even minutes off the response time. In this code pattern, using the power of Watson AI, we will create this danger response web app.
 
+![architecture1](doc/source/images/flow_chart.png)
+
 Built with React components and a Node.js server, the app will capture audio input and stream it to a Watson Speech to Text service. After the input speech is transcribed, it will be sent to a Watson Natural Language Understanding service that will identify, categorize, and score the danger threat in the text. Both the input speech and the danger analysis will be displayed in the app. 
 
 The key aspect of this tool is the NLU. Using Knowledge Studio, we will train a custom machine learning model for the ‘relations’ feature of the Watson NLU in order to drive the decision-making process of identifying the danger. We will create an ‘entity’ for the danger itself, and corresponding subcategories for each of the dangers-of-interest, for example ‘fire’ and ‘flood’. We will also create an ‘entity’ for the object that the danger is acting on. 
 
+![architecture2](doc/source/images/studio.png)
+
 The model will then identify and categorize the danger by reaching a minimum confidence threshold for a particular subcategory of danger. Additionally, the model will determine the severity of the danger, by analyzing the strength of the relation between the danger and object entities. 
 
+![architecture3](doc/source/images/entity.png)
 
 When you have completed this code pattern, you will understand how to:
 
@@ -22,10 +27,6 @@ When you have completed this code pattern, you will understand how to:
 > **NOTE**: This code pattern includes instructions for running Watson services on IBM Cloud or with the Watson API Kit on IBM Cloud Pak for Data.
 > Click [here](https://www.ibm.com/products/cloud-pak-for-data) for more information about IBM Cloud Pak for Data.
 
-![architecture1](doc/source/images/flow_chart.png)
-![architecture2](doc/source/images/studio.png)
-![architecture3](doc/source/images/entity.png)
-![architecture4](doc/source/images/final.gif)
 
 ## Flow
 
@@ -104,7 +105,7 @@ Click on one of the options below for instructions on deploying the Node.js serv
 
 > NOTE: The app was developed using Chrome on macOS. Browser compatibility issues are still being worked out.
 
-![watson-speech-translator.gif](doc/source/images/watson-speech-translator.gif)
+![watson-speech-translator.gif](doc/source/images/final.gif)
 
 1. Browse to your app URL
 
