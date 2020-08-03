@@ -22,7 +22,10 @@ When you have completed this code pattern, you will understand how to:
 > **NOTE**: This code pattern includes instructions for running Watson services on IBM Cloud or with the Watson API Kit on IBM Cloud Pak for Data.
 > Click [here](https://www.ibm.com/products/cloud-pak-for-data) for more information about IBM Cloud Pak for Data.
 
-![architecture](doc/source/images/architecture.png)
+![architecture1](doc/source/images/flow_chart.png)
+![architecture2](doc/source/images/studio.png)
+![architecture3](doc/source/images/entity.png)
+![architecture4](doc/source/images/final.gif)
 
 ## Flow
 
