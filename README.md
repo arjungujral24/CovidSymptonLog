@@ -1,27 +1,22 @@
-# Create a language translator app with voice input and output
+# Building a Watson Danger Response Tool with Custom NLU Domain Model
 
-In this code pattern, we will create a language translator web app. Built with React components
-and a Node.js server, the app will capture audio input and stream it to a
-Watson Speech to Text service. As the input speech is transcribed, it will also be sent to a
-Watson Language Translator service to be translated into the language you select. Both the transcribed and translated
-text will be displayed by the app in real time. Each completed phrase will be sent to Watson Text to Speech to be spoken
-in your choice of locale-specific voices.
+In moments of a disaster such as fires, floods, and shootings, victims need first response care as soon as possible. For example, the 2018 ‘Camp Fire’ in Northern California wiped out the town of Paradise, killing 85 people, and causing $16.5 billion in damages. In this case, and in many similar situations, the difference between a few seconds in response time meant not only lives saved, but millions and even billions of dollars salvaged in the potential destruction of valuable assets. 
 
-The best way to understand what is real-time transcription/translation vs. "completed phrase" vocalization is
-to try it out. You'll notice that the text is updated as words and phrases are completed and become better understood in
-context. To avoid backtracking or overlapping audio, only completed phrases are vocalized. These are typically
-short sentences or utterances where a pause indicates a break.
+How can we develop a solution that will reduce the response time of first responders, and provide a positive impact for those who need it most? Well, when a victim is normally in danger, they call 911 and begin a dialogue with a dispatcher. While this conversation is ongoing, the Watson Danger Response Tool will screen the conversation for select dangers including fires and floods. If one of those dangers are identified, the appropriate authorities will be immediately alerted, thus shaving off precious seconds and sometimes even minutes off the response time. In this code pattern, using the power of Watson AI, we will create this danger response web app.
 
-For the best live experience, wear headphones to listen to the translated version of what your microphone is listening to.
-Alternatively, you can use the toggle buttons to record and transcribe first without translating. When ready, select
-a language and voice and then enable translation (and speech).
+Built with React components and a Node.js server, the app will capture audio input and stream it to a Watson Speech to Text service. After the input speech is transcribed, it will be sent to a Watson Natural Language Understanding service that will identify, categorize, and score the danger threat in the text. Both the input speech and the danger analysis will be displayed in the app. 
+
+The key aspect of this tool is the NLU. Using Knowledge Studio, we will train a custom machine learning model for the ‘relations’ feature of the Watson NLU in order to drive the decision-making process of identifying the danger. We will create an ‘entity’ for the danger itself, and corresponding subcategories for each of the dangers-of-interest, for example ‘fire’ and ‘flood’. We will also create an ‘entity’ for the object that the danger is acting on. 
+
+The model will then identify and categorize the danger by reaching a minimum confidence threshold for a particular subcategory of danger. Additionally, the model will determine the severity of the danger, by analyzing the strength of the relation between the danger and object entities. 
+
 
 When you have completed this code pattern, you will understand how to:
 
 * Stream audio to Speech to Text using a WebSocket
-* Use Language Translator with a REST API
-* Retrieve and play audio from Speech to Text using a REST API
-* Integrate Speech to Text, Language Translator, and Text to Speech in a web app
+* Use Natural Language Understanding with a REST API
+* Retrieve and parse text from Speech to Text using a REST API
+* Integrate Speech to Text, Natural Language Understanding, and Knowledge Studio in a web app 
 * Use React components and a Node.js server
 
 > **NOTE**: This code pattern includes instructions for running Watson services on IBM Cloud or with the Watson API Kit on IBM Cloud Pak for Data.
@@ -29,13 +24,16 @@ When you have completed this code pattern, you will understand how to:
 
 ![architecture](doc/source/images/architecture.png)
 
+## Demo
+![Demo](Final GIF.gif)
+
 ## Flow
 
+1. User selects their preferred language.
 1. User presses the microphone button and captures the input audio.
 1. The audio is streamed to Speech to Text using a WebSocket.
 1. The transcribed text from Speech to Text is displayed and updated.
-1. The transcribed text is sent to Language Translator and the translated text is displayed and updated.
-1. Completed phrases are sent to Text to Speech and the result audio is automatically played.
+1. The transcribed text is sent to NLU for danger analysis and output is displayed.
 
 ## Steps
 
@@ -114,36 +112,18 @@ Click on one of the options below for instructions on deploying the Node.js serv
 
    * Use the URL provided at the end of your selected deployment option.
 
-1. Select a speech recognition model
+1. Select the language of your choice
 
    * The drop-down will be populated with models supported by your Speech to Text service.
-   
-1. Select an output language and voice
-
-   * The drop-down will only include voices that are supported by your Text to Speech service.
-     The list is also filtered to only show languages that can be translated from the source
-     language using Language Translator.
      
 1. Use the Speech to Text toggle
 
-   * Use the `Speech to Text` button (which becomes `Stop Listening`) to begin recording audio
+   * Use the `Speak Here` button (which becomes `Stop Listening`) to begin recording audio
      and streaming it to Speech to Text. Press the button again to stop listening/streaming.
      
-1. Use the Language Translation toggle
+1. Use the Detect Danger toggle
 
-   * The `Language Translation` button (which becomes `Stop Translating`) is also a toggle.
-     You can leave it enabled to translate while transcribing, or use it after you see the
-     transcribed text that you'd like to translate and say.
-     
-1. Disable Text to Speech
-
-   * By default, the app automatically uses Text to Speech to read the translated output.
-     The checkbox allows you to disable Text to Speech.
-
-1. Changing the language and voice
-
-   * If you change the voice while language translation is enabled, any current transcribed
-     text will be re-translated (and spoken if enabled).
+   * Use the `Detect Danger` button (which becomes `Detecting Danger`) to begin running the NLU and executing danger analysis. Press the button again to stop when output has been printed.
      
 1. Resetting the transcribed text
 
@@ -151,7 +131,6 @@ Click on one of the options below for instructions on deploying the Node.js serv
    
      * Press `Speech to Text` to restart listening
      * Refresh the page
-     * Change the speech recognition model
 
 ## License
 
