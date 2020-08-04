@@ -133,14 +133,15 @@ Click on one of the options below for instructions on deploying the Node.js serv
      
 ## Future Features
 1. Maps API
+    With additional time and resources, here are some features that can be implemented to supplement the current code pattern. 
 
-    * Google Maps API - parses the location of danger from the text and pins the location on visual map 
+    * Google Maps API - Parse the location of the danger incident using ‘Entities’ NLU feature and pin the location on a visual map.
     
-    * Database - every conversation/input for the tool would get stored in a database, so that it can       retrain and improve the model over time 
+    * Database - Store voice inputs in a database that can be used to periodically retrain and improve the model over time.
    
-   * User log - summarizes crucial pieces of information like location, time, and environment which can be passed on to first responders, so they are better prepared even before they approach they danger
+   * User log - Using ‘Concepts’ NLU feature, summarize important information like location, time, and environment from voice input. This summary can be passed on to first responders so they are prepared, even before they approach the danger. 
    
-   * Social Media - Use a webscraper to parse data from twitter to our application to figure out location and type of danger
+   * Social Media - Scrape social media forums (twitter, facebook) and other miscellaneous sources (ex: police radio) for danger statements and analyze accordingly. 
 
 
 
