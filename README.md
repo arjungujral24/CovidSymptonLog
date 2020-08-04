@@ -132,17 +132,11 @@ Click on one of the options below for instructions on deploying the Node.js serv
      * Refresh the page
      
 ## Future Features
-  1. With additional time and resources, here are some features that can be implemented to supplement the current code pattern. 
-
+  * With additional time and resources, here are some features that can be implemented to supplement the current code pattern. 
     * Google Maps API - Parse the location of the danger incident using ‘Entities’ NLU feature and pin the location on a visual map.
-    
     * Database - Store voice inputs in a database that can be used to periodically retrain and improve the model over time.
-   
-   * User log - Using ‘Concepts’ NLU feature, summarize important information like location, time, and environment from voice input. This summary can be passed on to first responders so they are prepared, even before they approach the danger. 
-   
-   * Social Media - Scrape social media forums (twitter, facebook) and other miscellaneous sources (ex: police radio) for danger statements and analyze accordingly. 
-
-
+    * User log - Using ‘Concepts’ NLU feature, summarize important information like location, time, and environment from voice input. This summary can be passed on to first responders so they are prepared, even before they approach the danger. 
+    * Social Media - Scrape social media forums (twitter, facebook) and other miscellaneous sources (ex: police radio) for danger statements and analyze accordingly. 
 
 ## License
 
