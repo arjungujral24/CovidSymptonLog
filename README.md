@@ -132,7 +132,7 @@ Click on one of the options below for instructions on deploying the Node.js serv
      * Refresh the page
      
 ## Future Features
-    With additional time and resources, here are some features that can be implemented to supplement the current code pattern. 
+  1. With additional time and resources, here are some features that can be implemented to supplement the current code pattern. 
 
     * Google Maps API - Parse the location of the danger incident using ‘Entities’ NLU feature and pin the location on a visual map.
     
