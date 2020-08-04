@@ -130,6 +130,19 @@ Click on one of the options below for instructions on deploying the Node.js serv
    
      * Press `Speech to Text` to restart listening
      * Refresh the page
+     
+## Future Features
+1. Maps API
+
+    * Google Maps API - parses the location of danger from the text and pins the location on visual map 
+    
+    * Database - every conversation/input for the tool would get stored in a database, so that it can       retrain and improve the model over time 
+   
+   * User log - summarizes crucial pieces of information like location, time, and environment which can be passed on to first responders, so they are better prepared even before they approach they danger
+   
+   * Social Media - Use a webscraper to parse data from twitter to our application to figure out location and type of danger
+
+
 
 ## License
 
